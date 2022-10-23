@@ -13,6 +13,18 @@
             integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
             crossorigin=""
         ></script>
+
+        <!-- Leaflet.markerclusterを読み込み -->
+        <script src="https://unpkg.com/leaflet.markercluster@1.3.0/dist/leaflet.markercluster.js"></script>
+        <link
+            rel="stylesheet"
+            href="https://unpkg.com/leaflet.markercluster@1.3.0/dist/MarkerCluster.css"
+        />
+        <link
+            rel="stylesheet"
+            href="https://unpkg.com/leaflet.markercluster@1.3.0/dist/MarkerCluster.Default.css"
+        />
+
         <style>
             #map {
                 height: 80vh;
@@ -40,14 +52,16 @@
                 '<a href="https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-P29-v2_0.html">国土数値情報 - 学校データ</a>',
             );
 
-            // GeoJSONレイヤーを作成
-            fetch('./P29-21_10.geojson') // 群馬県の学校データのGeoJSONを非同期読み込み
+            fetch('./P29-21.geojson') // 全国分の学校データ（5万件超）のGeoJSONを非同期読み込み
                 .then((res) => res.json())
                 .then((json) => {
-                    // GeoJSONレイヤーを作成
-                    L.geoJSON(json)
-                        .bindPopup((layer) => layer.feature.properties.P29_004) // ポップアップで学校名を表示
+                    // クラスタリングレイヤーを作成し地図に追加
+                    const markers = L.markerClusterGroup()
+                        .bindPopup(
+                            (layer) => layer.feature.properties.P29_004, // ポップアップで学校名を表示
+                        )
                         .addTo(map);
+                    L.geoJSON(json).addTo(markers); // クラスタリングレイヤーにGeoJSONデータをセット
                 });
         </script>
     </body>

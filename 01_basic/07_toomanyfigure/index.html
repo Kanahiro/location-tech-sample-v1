@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>7.地図上にさらに多くの図形を表示する</title>
+        <link
+            rel="stylesheet"
+            href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+            integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+            crossorigin=""
+        />
+        <script
+            src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+            integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+            crossorigin=""
+        ></script>
+        <style>
+            #map {
+                height: 80vh;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="map"></div>
+        <script>
+            const map = L.map('map', {
+                center: [35.3627808, 138.7307908],
+                zoom: 14,
+            });
+            const backgroundLayer = L.tileLayer(
+                'https://cyberjapandata.gsi.go.jp/xyz/seamlessphoto/{z}/{x}/{y}.jpg', // 地理院タイル空中写真
+                {
+                    maxZoom: 17,
+                    attribution:
+                        '<a href="https://maps.gsi.go.jp/development/ichiran.html">地理院タイル</a>',
+                },
+            );
+            map.addLayer(backgroundLayer);
+
+            // 円形
+            const circle = L.circle([35.3627808, 138.7307908], {
+                color: 'yellow',
+                fillColor: '#ff0000',
+                fillOpacity: 0.3,
+                radius: 1000,
+            })
+                .bindPopup('I am Circle!')
+                .addTo(map);
+
+            // 線分
+            const line = L.polyline(
+                [
+                    [35.36, 138.73],
+                    [35.37, 138.73],
+                    [35.37, 138.74],
+                    [35.38, 138.74],
+                    [35.39, 138.75],
+                    [35.37, 138.75],
+                ],
+                { color: 'blue' },
+            )
+                .bindPopup('I am Polyline!')
+                .addTo(map);
+
+            // 多角形
+            const polygon = L.polygon(
+                [
+                    [35.36, 138.7307908],
+                    [35.35, 138.74],
+                    [35.34, 138.72],
+                ],
+                { color: 'green' },
+            )
+                .bindPopup('I am Polygon!')
+                .addTo(map);
+        </script>
+    </body>
+</html>
