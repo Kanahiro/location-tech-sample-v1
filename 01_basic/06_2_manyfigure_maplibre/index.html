@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>6-2.MapLibre GL JSで地図上に多くの図形を表示する</title>
+        <!-- MapLibre GL JSを読み込み -->
+        <script src="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.js"></script>
+        <link
+            href="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.css"
+            rel="stylesheet"
+        />
+        <style>
+            #map {
+                height: 80vh;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="map"></div>
+        <script>
+            const map = new maplibregl.Map({
+                container: 'map',
+                center: [137.1, 36.5],
+                zoom: 4,
+                style: {
+                    version: 8,
+                    sources: {
+                        osm: {
+                            type: 'raster',
+                            tiles: [
+                                'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                            ],
+                            tileSize: 256,
+                        },
+                        polygon: {
+                            type: 'geojson',
+                            data: './A16-15_00_DID.geojson',
+                        },
+                        line: {
+                            type: 'geojson',
+                            data: './N02-21_RailroadSection.geojson',
+                        },
+                    },
+                    layers: [
+                        {
+                            id: 'osm-layer',
+                            source: 'osm',
+                            type: 'raster',
+                        },
+                        {
+                            id: 'polygon-layer',
+                            source: 'polygon',
+                            type: 'fill',
+                        },
+                        {
+                            id: 'line-layer',
+                            source: 'line',
+                            type: 'line',
+                        },
+                    ],
+                },
+            });
+        </script>
+    </body>
+</html>
