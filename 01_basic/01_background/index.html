@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>1.地図タイルを背景として表示する</title>
+        <!-- LeafletのCSS読み込み -->
+        <link
+            rel="stylesheet"
+            href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+            integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+            crossorigin=""
+        />
+        <!-- LeafletのJavaScript読み込み -->
+        <script
+            src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+            integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+            crossorigin=""
+        ></script>
+        <!-- 地図を表示するdiv要素に明示的に高さを設定する -->
+        <style>
+            #map {
+                height: 80vh;
+            }
+        </style>
+    </head>
+    <body>
+        <!-- 地図を表示するdiv要素を宣言 -->
+        <div id="map"></div>
+        <script>
+            // 地図インスタンスを初期化
+            const map = L.map('map', {
+                center: [36.5, 137.1], // 初期表示の地図中心の[緯度, 経度]
+                zoom: 5, // 初期ズームレベル
+            });
+            // 背景レイヤーインスタンスを初期化
+            const backgroundLayer = L.tileLayer(
+                'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                {
+                    maxZoom: 19,
+                    attribution:
+                        '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                },
+            );
+            // 地図インスタンスへレイヤーを追加
+            map.addLayer(backgroundLayer);
+        </script>
+    </body>
+</html>
