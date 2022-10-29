@@ -37,7 +37,7 @@
             map.addLayer(backgroundLayer);
 
             // 円形
-            const circle = L.circle([35.3627808, 138.7307908], {
+            L.circle([35.3627808, 138.7307908], {
                 color: 'yellow',
                 fillColor: '#ff0000',
                 fillOpacity: 0.3,
@@ -47,7 +47,7 @@
                 .addTo(map);
 
             // 線分
-            const line = L.polyline(
+            L.polyline(
                 [
                     [35.36, 138.73],
                     [35.37, 138.73],
@@ -62,7 +62,7 @@
                 .addTo(map);
 
             // 多角形
-            const polygon = L.polygon(
+            L.polygon(
                 [
                     [35.36, 138.7307908],
                     [35.35, 138.74],

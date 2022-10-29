@@ -15,16 +15,10 @@
             integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
             crossorigin=""
         ></script>
-        <!-- 地図を表示するdiv要素に明示的に高さを設定する -->
-        <style>
-            #map {
-                height: 80vh;
-            }
-        </style>
     </head>
     <body>
         <!-- 地図を表示するdiv要素を宣言 -->
-        <div id="map"></div>
+        <div id="map" style="height: 80vh"></div>
         <script>
             // 地図インスタンスを初期化
             const map = L.map('map', {
