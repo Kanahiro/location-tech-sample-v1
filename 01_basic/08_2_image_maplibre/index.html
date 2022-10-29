@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>8-2.MapLibre GL JSで地図上に画像を表示する</title>
+        <script src="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.js"></script>
+        <link
+            href="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.css"
+            rel="stylesheet"
+        />
+        <style>
+            #map {
+                height: 80vh;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="map"></div>
+        <script>
+            // タイルのURLはhttpから始まるフルパスである必要があるため、http~~/index.htmlのhttp://~~までを取得する
+            const path = location.href.replace('/index.html', '');
+
+            const map = new maplibregl.Map({
+                container: 'map',
+                center: [136.0881, 35.2406],
+                zoom: 9,
+                customAttribution:
+                    '<a href="https://maps.gsi.go.jp/development/ichiran.html">地理院タイル</a>',
+                style: {
+                    version: 8,
+                    sources: {
+                        osm: {
+                            type: 'raster',
+                            tiles: [
+                                'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                            ],
+                            tileSize: 256,
+                            attribution:
+                                '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                        },
+                        lakebiwa: {
+                            type: 'image',
+                            url: './lakebiwa.png',
+                            coordinates: [
+                                [135.596438368833077, 35.5498836025608185], // 左上
+                                [136.5823028110609414, 35.5498836025608185], // 右上
+                                [136.5823028110609414, 34.9281476305997742], // 右下
+                                [135.596438368833077, 34.9281476305997742], // 左下
+                            ],
+                        },
+                    },
+                    layers: [
+                        {
+                            id: 'osm-layer',
+                            source: 'osm',
+                            type: 'raster',
+                        },
+                        {
+                            id: 'lakebiwa-layer',
+                            source: 'lakebiwa',
+                            type: 'raster',
+                            paint: {
+                                'raster-opacity': 0.7,
+                            },
+                        },
+                    ],
+                },
+            });
+        </script>
+    </body>
+</html>

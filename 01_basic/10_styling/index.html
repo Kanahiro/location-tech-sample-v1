@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>10.地図のスタイリング</title>
+        <script src="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.js"></script>
+        <link
+            href="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.css"
+            rel="stylesheet"
+        />
+        <style>
+            #map {
+                height: 80vh;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="map"></div>
+        <script>
+            const map = new maplibregl.Map({
+                container: 'map',
+                center: [137.1, 36.5],
+                zoom: 5,
+                style: {
+                    version: 8,
+                    glyphs: '/fonts/{fontstack}/{range}.pbf', // フォントデータを指定
+                    sources: {
+                        osm: {
+                            type: 'raster',
+                            tiles: [
+                                'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                            ],
+                            tileSize: 256,
+                            maxzoom: 18,
+                            attribution:
+                                '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                        },
+                        admin: {
+                            type: 'vector',
+                            tiles: [
+                                `${location.href.replace('/index.html',　'')}/admin/{z}/{x}/{y}.pbf`,
+                            ],
+                            maxzoom: 8,
+                            attribution:
+                                '<a href="https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-N03-v3_1.html">国土数値情報 - 行政区域データ</a>',
+                        },
+                        school: {
+                            type: 'geojson',
+                            data: './P29-21.geojson',
+                            attribution:
+                                '<a href="https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-P29-v2_0.html">国土数値情報 - 学校データ</a>',
+                        },
+                    },
+                    layers: [
+                        {
+                            // 背景色
+                            id: 'background',
+                            type: 'background',
+                            paint: {
+                                'background-color': '#555',
+                            },
+                        },
+                        {
+                            id: 'osm-layer',
+                            source: 'osm',
+                            type: 'raster',
+                            minzoom: 10,
+                            paint: {
+                                'raster-opacity': [
+                                    // ズームレベルに応じた透過度調整
+                                    'interpolate', // 補間処理
+                                    ['linear'], // 線形で補間
+                                    ['zoom'], // ズームレベル間の補間
+                                    10, // ズームレベル10のときに
+                                    0, // 透過度0%（透明）
+                                    14, // ズームレベル14のときに
+                                    0.7, // 透過度70%
+                                ],
+                            },
+                        },
+                        {
+                            id: 'admin-layer',
+                            source: 'admin',
+                            'source-layer': 'admin',
+                            type: 'fill',
+                            paint: {
+                                'fill-color': '#6a3',
+                                'fill-opacity': [
+                                    'interpolate',
+                                    ['linear'],
+                                    ['zoom'],
+                                    10, // ズームレベル10のときに
+                                    0.7, // 透過度70%
+                                    14, // ズームレベル10のときに
+                                    0.3, // 透過度30%
+                                ],
+                            },
+                        },
+                        {
+                            // ポリゴンデータをlineとして描画することも出来る
+                            id: 'admin-outline-layer',
+                            source: 'admin',
+                            'source-layer': 'admin',
+                            type: 'line',
+                            paint: {
+                                'line-color': '#373',
+                                'line-width': 4,
+                            },
+                        },
+                        {
+                            id: 'school-label-layer', // 学校名を表示するレイヤー
+                            source: 'school',
+                            type: 'symbol', // フォントはsymbolとして表示する
+                            minzoom: 12,
+                            layout: {
+                                'text-field': ['get', 'P29_004'], // P29_004=学校名
+                                'text-font': ['Noto Sans CJK JP Bold'], // glyphsのフォントデータに含まれるフォントを指定
+                                'text-offset': [0, 0.5], // フォントの位置調整
+                                'text-anchor': 'top', // フォントの位置調整
+                                'text-size': [
+                                    'interpolate',
+                                    ['linear'],
+                                    ['zoom'],
+                                    10, // ズームレベル10のときに
+                                    8, // フォントサイズ8
+                                    14, // ズームレベル14のときに
+                                    14, // フォントサイズ14
+                                ],
+                            },
+                            paint: {
+                                'text-halo-width': 1,
+                                'text-halo-color': '#fff',
+                            },
+                        },
+                        {
+                            id: 'school-heatmap-layer', // 低ズームレベルでは、学校の位置情報をヒートマップとして表示
+                            source: 'school',
+                            type: 'heatmap',
+                            maxzoom: 12,
+                            paint: {
+                                'heatmap-weight': 0.01, // ポイントひとつあたりの重み
+                                'heatmap-opacity': 0.7,
+                                'heatmap-color': [
+                                    'interpolate',
+                                    ['linear'],
+                                    ['heatmap-density'],
+                                    0, // 重み0のときは
+                                    'rgba(0, 0, 0, 0)', // 透明
+                                    1, // 重み1のときは
+                                    'orange', // オレンジ色に
+                                ],
+                            },
+                        },
+                        {
+                            id: 'school-icon-layer', // 高ズームレベルでは、学校を点で表示
+                            source: 'school',
+                            type: 'circle',
+                            minzoom: 8,
+                            paint: {
+                                'circle-color': [
+                                    // アイコンの色を属性値によって塗り分ける
+                                    'interpolate',
+                                    ['linear'],
+                                    ['get', 'P29_003'], // P29_003は学校種別コードを示す
+                                    16001,
+                                    '#f00', // 小学校は赤
+                                    16002,
+                                    '#0f0', // 中学校は緑
+                                    16003,
+                                    '#0f0', // 中等教育学校も緑
+                                    16004,
+                                    '#00f', // 高校は青
+                                    16005,
+                                    'orange', // その他はオレンジ
+                                ],
+                                'circle-opacity': [
+                                    'interpolate',
+                                    ['linear'],
+                                    ['zoom'],
+                                    8, // ズームレベル8のときに
+                                    0, // 透過度0%
+                                    9, // ズームレベル9のときに
+                                    0.1, // 透過度10%
+                                    14, // ズームレベル14のときに
+                                    1, // 透過度100%
+                                ],
+                            },
+                        },
+                    ],
+                },
+            });
+        </script>
+    </body>
+</html>

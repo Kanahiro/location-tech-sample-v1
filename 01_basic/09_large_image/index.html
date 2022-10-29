@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>9.地図上に大きな画像を表示する</title>
+        <script src="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.js"></script>
+        <link
+            href="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.css"
+            rel="stylesheet"
+        />
+        <style>
+            #map {
+                height: 80vh;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="map"></div>
+        <script>
+            // ラスタータイルが、このファイルからの相対パスで`./tiles`ディレクトリに保存されているとします
+            const rastertileUrl = `${location.href.replace('/index.html', '')}/tiles/{z}/{x}/{y}.png`;
+
+            const map = new maplibregl.Map({
+                container: 'map',
+                center: [136.0881, 35.2406],
+                zoom: 9,
+                style: {
+                    version: 8,
+                    sources: {
+                        osm: {
+                            type: 'raster',
+                            tiles: [
+                                'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                            ],
+                            tileSize: 256,
+                            attribution:
+                                '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                        },
+                        naturalearth: {
+                            type: 'raster',
+                            tiles: [rastertileUrl],
+                            tileSize: 256,
+                            maxzoom: 5,
+                            attribution:
+                                '<a href="https://www.naturalearthdata.com/">Natural Earth</a>',
+                        },
+                    },
+                    layers: [
+                        {
+                            id: 'osm-layer',
+                            source: 'osm',
+                            type: 'raster',
+                        },
+                        {
+                            id: 'naturalearth-layer',
+                            source: 'naturalearth',
+                            type: 'raster',
+                            paint: {
+                                'raster-opacity': 0.7,
+                            },
+                        },
+                    ],
+                },
+            });
+        </script>
+    </body>
+</html>
