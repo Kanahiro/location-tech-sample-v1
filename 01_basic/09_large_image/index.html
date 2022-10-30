@@ -7,14 +7,9 @@
             href="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.css"
             rel="stylesheet"
         />
-        <style>
-            #map {
-                height: 80vh;
-            }
-        </style>
     </head>
     <body>
-        <div id="map"></div>
+        <div id="map" style="height: 80vh"></div>
         <script>
             // ラスタータイルが、このファイルからの相対パスで`./tiles`ディレクトリに保存されているとします
             const rastertileUrl = `${location.href.replace('/index.html', '')}/tiles/{z}/{x}/{y}.png`;
@@ -22,19 +17,10 @@
             const map = new maplibregl.Map({
                 container: 'map',
                 center: [136.0881, 35.2406],
-                zoom: 4,
+                zoom: 0,
                 style: {
                     version: 8,
                     sources: {
-                        osm: {
-                            type: 'raster',
-                            tiles: [
-                                'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                            ],
-                            tileSize: 256,
-                            attribution:
-                                '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-                        },
                         naturalearth: {
                             type: 'raster',
                             tiles: [rastertileUrl],
@@ -46,17 +32,9 @@
                     },
                     layers: [
                         {
-                            id: 'osm-layer',
-                            source: 'osm',
-                            type: 'raster',
-                        },
-                        {
                             id: 'naturalearth-layer',
                             source: 'naturalearth',
                             type: 'raster',
-                            paint: {
-                                'raster-opacity': 0.7,
-                            },
                         },
                     ],
                 },

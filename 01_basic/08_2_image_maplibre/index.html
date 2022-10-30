@@ -7,14 +7,9 @@
             href="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.css"
             rel="stylesheet"
         />
-        <style>
-            #map {
-                height: 80vh;
-            }
-        </style>
     </head>
     <body>
-        <div id="map"></div>
+        <div id="map" style="height: 80vh"></div>
         <script>
             // タイルのURLはhttpから始まるフルパスである必要があるため、http~~/index.htmlのhttp://~~までを取得する
             const path = location.href.replace('/index.html', '');
@@ -34,6 +29,7 @@
                                 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                             ],
                             tileSize: 256,
+                            maxzoom: 18,
                             attribution:
                                 '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
                         },

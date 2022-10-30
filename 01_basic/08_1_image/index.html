@@ -36,10 +36,15 @@
             );
             map.addLayer(backgroundLayer);
 
-            const imageLayer = L.imageOverlay('./mtfuji.jpg', [
-                [35.2906143398424206, 138.6212919295209929],
-                [35.4299751815481514, 138.8426007912885041],
-            ]);
+            // 画像を、左下・右上の位置を指定して追加する
+            const imageLayer = L.imageOverlay(
+                './mtfuji.jpg',
+                [
+                    [35.2906143398424206, 138.6212919295209929],
+                    [35.4299751815481514, 138.8426007912885041],
+                ],
+                { opacity: 0.7 },
+            );
             map.addLayer(imageLayer);
 
             // 出典表示を追加
