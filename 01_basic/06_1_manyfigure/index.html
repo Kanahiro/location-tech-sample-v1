@@ -13,14 +13,9 @@
             integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
             crossorigin=""
         ></script>
-        <style>
-            #map {
-                height: 80vh;
-            }
-        </style>
     </head>
     <body>
-        <div id="map"></div>
+        <div id="map" style="height: 80vh"></div>
         <script>
             const map = L.map('map', {
                 center: [35.68, 139.7],
@@ -117,8 +112,8 @@
                     // GeoJSONレイヤーを作成
                     const line = L.geoJSON(json, {
                         style: (feature) => ({
-                            weight: weightDict[feature.properties.N02_002],
-                            color: colorDict[feature.properties.N02_002],
+                            weight: weightDict[feature.properties.N02_002], // 事業者種別コードから線の太さを得る
+                            color: colorDict[feature.properties.N02_002], // 事業者種別コードから線の色を得る
                         }),
                     })
                         // ポップアップで事業者名と路線名を表示
