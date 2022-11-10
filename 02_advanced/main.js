@@ -121,19 +121,6 @@ const map = new maplibregl.Map({
                 attribution:
                     '<a href="https://disaportal.gsi.go.jp/hazardmap/copyright/opendata.html">ハザードマップポータルサイト</a>',
             },
-            admin: {
-                // 行政区域
-                type: 'vector',
-                tiles: [
-                    `${location.href.replace(
-                        '/index.html',
-                        '',
-                    )}/admin/{z}/{x}/{y}.pbf`,
-                ],
-                maxzoom: 8,
-                attribution:
-                    '<a href="https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-N03-v3_1.html">国土数値情報 - 行政区域データ</a>',
-            },
             skhb: {
                 // 指定緊急避難場所
                 type: 'vector',
@@ -179,13 +166,6 @@ const map = new maplibregl.Map({
                 id: 'gsi_photo-layer',
                 source: 'gsi_photo',
                 type: 'raster',
-                layout: { visibility: 'none' },
-            },
-            {
-                id: 'admin-layer',
-                source: 'admin',
-                'source-layer': 'admin',
-                type: 'line',
                 layout: { visibility: 'none' },
             },
             {
@@ -528,29 +508,29 @@ map.on('click', (e) => {
             <div>${feature.properties.remarks ?? ''}</div>\
             <div>\
             <span${
-                feature.properties.disaster1 === 1 ? ' style="color:#ccc;"' : ''
+                feature.properties.disaster1 === 1 ? '' : ' style="color:#ccc;"'
             }">洪水</span>\
             <span${
-                feature.properties.disaster2 === 1 ? ' style="color:#ccc;"' : ''
+                feature.properties.disaster2 === 1 ? '' : ' style="color:#ccc;"'
             }> 崖崩れ/土石流/地滑り</span>\
             <span${
-                feature.properties.disaster3 === 1 ? ' style="color:#ccc;"' : ''
+                feature.properties.disaster3 === 1 ? '' : ' style="color:#ccc;"'
             }> 高潮</span>\
             <span${
-                feature.properties.disaster4 === 1 ? ' style="color:#ccc;"' : ''
+                feature.properties.disaster4 === 1 ? '' : ' style="color:#ccc;"'
             }> 地震</span>\
             <div>\
             <span${
-                feature.properties.disaster5 === 1 ? ' style="color:#ccc;"' : ''
+                feature.properties.disaster5 === 1 ? '' : ' style="color:#ccc;"'
             }>津波</span>\
             <span${
-                feature.properties.disaster6 === 1 ? ' style="color:#ccc;"' : ''
+                feature.properties.disaster6 === 1 ? '' : ' style="color:#ccc;"'
             }> 大規模な火事</span>\
             <span${
-                feature.properties.disaster7 === 1 ? ' style="color:#ccc;"' : ''
+                feature.properties.disaster7 === 1 ? '' : ' style="color:#ccc;"'
             }> 内水氾濫</span>\
             <span${
-                feature.properties.disaster8 === 1 ? ' style="color:#ccc;"' : ''
+                feature.properties.disaster8 === 1 ? '' : ' style="color:#ccc;"'
             }> 火山現象</span>\
             </div>`,
         )
