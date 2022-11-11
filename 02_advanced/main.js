@@ -1,9 +1,12 @@
+// MapLibre GL JS
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 
+// レイヤーコントロール
 import OpacityControl from 'maplibre-gl-opacity';
 import 'maplibre-gl-opacity/dist/maplibre-gl-opacity.css';
 
+// 地点間の距離を計算するモジュール
 import distance from '@turf/distance';
 
 const map = new maplibregl.Map({
@@ -15,8 +18,8 @@ const map = new maplibregl.Map({
     maxBounds: [122, 20, 154, 50],
     style: {
         version: 8,
-        glyphs: './fonts/{fontstack}/{range}.pbf',
         sources: {
+            // 背景地図ここから
             osm: {
                 type: 'raster',
                 tiles: ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
@@ -55,6 +58,8 @@ const map = new maplibregl.Map({
                 attribution:
                     '<a href="https://maps.gsi.go.jp/development/ichiran.html">地理院タイル</a>',
             },
+            // 背景地図ここまで
+            // 重ねるハザードマップここから
             hazard_flood: {
                 type: 'raster',
                 tiles: [
@@ -121,8 +126,9 @@ const map = new maplibregl.Map({
                 attribution:
                     '<a href="https://disaportal.gsi.go.jp/hazardmap/copyright/opendata.html">ハザードマップポータルサイト</a>',
             },
+            // 重ねるハザードマップここまで
             skhb: {
-                // 指定緊急避難場所
+                // 指定緊急避難場所ベクトルタイル
                 type: 'vector',
                 tiles: [
                     `${location.href.replace(
@@ -136,6 +142,7 @@ const map = new maplibregl.Map({
                     '<a href="https://www.gsi.go.jp/bousaichiri/hinanbasho.html" target="_blank">国土地理院:指定緊急避難場所データ</a>',
             },
             route: {
+                // 現在位置と最寄りの避難施設をつなぐライン
                 type: 'geojson',
                 data: {
                     type: 'FeatureCollection',
@@ -144,11 +151,12 @@ const map = new maplibregl.Map({
             },
         },
         layers: [
+            // 背景地図ここから
             {
                 id: 'osm-layer',
                 source: 'osm',
                 type: 'raster',
-                layout: { visibility: 'none' },
+                layout: { visibility: 'none' }, // レイヤーの表示はOpacityControlで操作するためデフォルトで非表示にしておく
             },
             {
                 id: 'gsi_std-layer',
@@ -168,6 +176,8 @@ const map = new maplibregl.Map({
                 type: 'raster',
                 layout: { visibility: 'none' },
             },
+            // 背景地図ここまで
+            // 重ねるハザードマップここから
             {
                 id: 'hazard_flood-layer',
                 source: 'hazard_flood',
@@ -204,7 +214,9 @@ const map = new maplibregl.Map({
                 type: 'raster',
                 layout: { visibility: 'none' },
             },
+            // 重ねるハザードマップここまで
             {
+                // 現在位置と最寄り施設のライン
                 id: 'route-layer',
                 source: 'route',
                 type: 'line',
@@ -213,14 +225,23 @@ const map = new maplibregl.Map({
                     'line-width': 4,
                 },
             },
+            // 全ての指定緊急避難場所ここから
             {
                 id: 'skhb-0-layer',
                 source: 'skhb',
                 'source-layer': 'skhb',
                 type: 'circle',
                 paint: {
-                    'circle-color': '#6666cc',
-                    'circle-radius': 6,
+                    'circle-color': '#77aaee',
+                    'circle-radius': [
+                        'interpolate',
+                        ['linear'],
+                        ['zoom'],
+                        5,
+                        2,
+                        14,
+                        6,
+                    ],
                     'circle-stroke-width': 1,
                     'circle-stroke-color': '#ffffff',
                 },
@@ -233,7 +254,15 @@ const map = new maplibregl.Map({
                 type: 'circle',
                 paint: {
                     'circle-color': '#6666cc',
-                    'circle-radius': 6,
+                    'circle-radius': [
+                        'interpolate',
+                        ['linear'],
+                        ['zoom'],
+                        5,
+                        2,
+                        14,
+                        6,
+                    ],
                     'circle-stroke-width': 1,
                     'circle-stroke-color': '#ffffff',
                 },
@@ -247,7 +276,15 @@ const map = new maplibregl.Map({
                 type: 'circle',
                 paint: {
                     'circle-color': '#ccaa33',
-                    'circle-radius': 6,
+                    'circle-radius': [
+                        'interpolate',
+                        ['linear'],
+                        ['zoom'],
+                        5,
+                        2,
+                        14,
+                        6,
+                    ],
                     'circle-stroke-width': 1,
                     'circle-stroke-color': '#ffffff',
                 },
@@ -261,7 +298,15 @@ const map = new maplibregl.Map({
                 type: 'circle',
                 paint: {
                     'circle-color': '#aa33aa',
-                    'circle-radius': 6,
+                    'circle-radius': [
+                        'interpolate',
+                        ['linear'],
+                        ['zoom'],
+                        5,
+                        2,
+                        14,
+                        6,
+                    ],
                     'circle-stroke-width': 1,
                     'circle-stroke-color': '#ffffff',
                 },
@@ -275,7 +320,15 @@ const map = new maplibregl.Map({
                 type: 'circle',
                 paint: {
                     'circle-color': '#33aa33',
-                    'circle-radius': 6,
+                    'circle-radius': [
+                        'interpolate',
+                        ['linear'],
+                        ['zoom'],
+                        5,
+                        2,
+                        14,
+                        6,
+                    ],
                     'circle-stroke-width': 1,
                     'circle-stroke-color': '#ffffff',
                 },
@@ -289,7 +342,15 @@ const map = new maplibregl.Map({
                 type: 'circle',
                 paint: {
                     'circle-color': '#3333aa',
-                    'circle-radius': 6,
+                    'circle-radius': [
+                        'interpolate',
+                        ['linear'],
+                        ['zoom'],
+                        5,
+                        2,
+                        14,
+                        6,
+                    ],
                     'circle-stroke-width': 1,
                     'circle-stroke-color': '#ffffff',
                 },
@@ -303,7 +364,15 @@ const map = new maplibregl.Map({
                 type: 'circle',
                 paint: {
                     'circle-color': '#aa6666',
-                    'circle-radius': 6,
+                    'circle-radius': [
+                        'interpolate',
+                        ['linear'],
+                        ['zoom'],
+                        5,
+                        2,
+                        14,
+                        6,
+                    ],
                     'circle-stroke-width': 1,
                     'circle-stroke-color': '#ffffff',
                 },
@@ -317,7 +386,15 @@ const map = new maplibregl.Map({
                 type: 'circle',
                 paint: {
                     'circle-color': '#3333aa',
-                    'circle-radius': 6,
+                    'circle-radius': [
+                        'interpolate',
+                        ['linear'],
+                        ['zoom'],
+                        5,
+                        2,
+                        14,
+                        6,
+                    ],
                     'circle-stroke-width': 1,
                     'circle-stroke-color': '#ffffff',
                 },
@@ -331,7 +408,15 @@ const map = new maplibregl.Map({
                 type: 'circle',
                 paint: {
                     'circle-color': '#aa3333',
-                    'circle-radius': 6,
+                    'circle-radius': [
+                        'interpolate',
+                        ['linear'],
+                        ['zoom'],
+                        5,
+                        2,
+                        14,
+                        6,
+                    ],
                     'circle-stroke-width': 1,
                     'circle-stroke-color': '#ffffff',
                 },
@@ -346,26 +431,30 @@ const map = new maplibregl.Map({
  * 現在選択されている指定緊急避難場所レイヤー(skhb)を特定しそのfilter条件を返す
  */
 const getCurrentSkhbLayerFilter = () => {
-    const style = map.getStyle();
+    const style = map.getStyle(); // style定義を取得
     const skhbLayers = style.layers.filter((layer) =>
+        // `skhb`から始まるlayerを抽出
         layer.id.startsWith('skhb'),
     );
     const visibleSkhbLayers = skhbLayers.filter(
+        // 現在表示中のレイヤーを見つける
         (layer) => layer.layout.visibility === 'visible',
     );
-    return visibleSkhbLayers[0].filter;
+    return visibleSkhbLayers[0].filter; // 表示中レイヤーのfilter条件を返す
 };
 
 /**
  * 経緯度を渡すと最寄りの指定緊急避難場所を返す
  */
 const getNearestFeature = (longitude, latitude) => {
+    // 現在表示中の指定緊急避難場所のタイルデータ（＝地物）を取得する
     const currentSkhbLayerFilter = getCurrentSkhbLayerFilter();
     const features = map.querySourceFeatures('skhb', {
         sourceLayer: 'skhb',
         filter: currentSkhbLayerFilter,
     });
 
+    // 現在地に最も近い地物を見つける
     const nearestFeature = features.reduce((minDistFeature, feature) => {
         const dist = distance(
             [longitude, latitude],
@@ -385,14 +474,14 @@ const getNearestFeature = (longitude, latitude) => {
     return nearestFeature;
 };
 
-let userLocation = null;
+let userLocation = null; // ユーザーの最新の現在地を保存する
 
 /**
  * 最新のユーザーの位置情報と最寄りの指定緊急避難場所を繋いだラインを描画する
  */
 const drawRoute = () => {
-    if (map.getZoom() < 7) return;
-    if (userLocation === null) {
+    if (map.getZoom() < 7 || userLocation === null) {
+        // ズームが一定値以下または現在地が計算されていない場合はラインを消去する
         map.getSource('route').setData({
             type: 'FeatureCollection',
             features: [],
@@ -413,15 +502,23 @@ const drawRoute = () => {
     });
 };
 
+// MapLibre GL JSの現在地取得機能
 const geolocationControl = new maplibregl.GeolocateControl({
     trackUserLocation: true,
 });
 map.addControl(geolocationControl);
 geolocationControl.on('geolocate', (e) => {
+    // 位置情報が更新されるたびに発火・userLocationを更新
     userLocation = [e.coords.longitude, e.coords.latitude];
 });
+geolocationControl.on('trackuserlocationend', () => {
+    // 位置情報取得モードが終了時に、保存している現在位置を消去する
+    userLocation = null;
+});
 
+// マップの初期ロード完了時に発火するイベント
 map.on('load', () => {
+    // 背景地図・重ねるタイル地図のコントロール
     const opacity = new OpacityControl({
         baseLayers: {
             'osm-layer': 'OpenStreetMap',
@@ -441,6 +538,7 @@ map.on('load', () => {
     });
     map.addControl(opacity, 'top-left');
 
+    // 指定緊急避難場所レイヤーのコントロール
     const opacitySkhb = new OpacityControl({
         baseLayers: {
             'skhb-0-layer': '全緊急指定避難場所',
@@ -456,11 +554,14 @@ map.on('load', () => {
     });
     map.addControl(opacitySkhb, 'bottom-left');
 
+    // 地図の移動・描画時に、ユーザー現在地と最寄りの避難施設の線分を描画する
     map.on('move', () => drawRoute());
     map.on('render', () => drawRoute());
 });
 
+// 地図上でマウスが移動した際のイベント
 map.on('mousemove', (e) => {
+    // マウスカーソル以下に指定緊急避難場所レイヤーが存在するかどうかをチェック
     const features = map.queryRenderedFeatures(e.point, {
         layers: [
             'skhb-0-layer',
@@ -475,13 +576,17 @@ map.on('mousemove', (e) => {
         ],
     });
     if (features.length > 0) {
+        // 地物が存在する場合はカーソルをpointerに変更
         map.getCanvas().style.cursor = 'pointer';
     } else {
+        // 存在しない場合はデフォルト
         map.getCanvas().style.cursor = '';
     }
 });
 
+// 地図上をクリックした際のイベント
 map.on('click', (e) => {
+    // クリック箇所に指定緊急避難場所レイヤーが存在するかどうかをチェック
     const features = map.queryRenderedFeatures(e.point, {
         layers: [
             'skhb-0-layer',
@@ -495,7 +600,9 @@ map.on('click', (e) => {
             'skhb-8-layer',
         ],
     });
-    if (features.length === 0) return;
+    if (features.length === 0) return; // 地物がなければ処理を終了
+
+    // 地物があればポップアップを表示する
     const feature = features[0];
     const popup = new maplibregl.Popup()
         .setLngLat(feature.geometry.coordinates)
