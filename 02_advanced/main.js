@@ -425,35 +425,6 @@ const getNearestFeature = (longitude, latitude) => {
 
 let userLocation = null; // ユーザーの最新の現在地を保存する
 
-/**
- * 最新のユーザーの位置情報と最寄りの指定緊急避難場所を繋いだラインを描画する
- */
-const drawRoute = () => {
-    if (map.getZoom() < 7 || userLocation === null) {
-        // ズームが一定値以下または現在地が計算されていない場合はラインを消去する
-        map.getSource('route').setData({
-            type: 'FeatureCollection',
-            features: [],
-        });
-        return;
-    }
-    // 現在地の最寄りの地物を取得
-    const nearestFeature = getNearestFeature(userLocation[0], userLocation[1]);
-    // 現在地と最寄りの地物をつないだラインのGeoJSON-Feature
-    const routeFeature = {
-        type: 'Feature',
-        geometry: {
-            type: 'LineString',
-            coordinates: [userLocation, nearestFeature._geometry.coordinates],
-        },
-    };
-    // style.sources.routeのGeoJSONデータを更新する
-    map.getSource('route').setData({
-        type: 'FeatureCollection',
-        features: [routeFeature],
-    });
-};
-
 // MapLibre GL JSの現在地取得機能
 const geolocationControl = new maplibregl.GeolocateControl({
     trackUserLocation: true,
@@ -500,7 +471,37 @@ map.on('load', () => {
     map.on('render', () => {
         // GeolocationControlがオフなら現在位置を消去する
         if (geolocationControl._watchState === 'OFF') userLocation = null;
-        drawRoute();
+
+        // ズームが一定値以下または現在地が計算されていない場合はラインを消去する
+        if (map.getZoom() < 7 || userLocation === null) {
+            map.getSource('route').setData({
+                type: 'FeatureCollection',
+                features: [],
+            });
+            return;
+        }
+
+        // 現在地の最寄りの地物を取得
+        const nearestFeature = getNearestFeature(
+            userLocation[0],
+            userLocation[1],
+        );
+        // 現在地と最寄りの地物をつないだラインのGeoJSON-Feature
+        const routeFeature = {
+            type: 'Feature',
+            geometry: {
+                type: 'LineString',
+                coordinates: [
+                    userLocation,
+                    nearestFeature._geometry.coordinates,
+                ],
+            },
+        };
+        // style.sources.routeのGeoJSONデータを更新する
+        map.getSource('route').setData({
+            type: 'FeatureCollection',
+            features: [routeFeature],
+        });
     });
 });
 
