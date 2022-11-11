@@ -488,7 +488,9 @@ const drawRoute = () => {
         });
         return;
     }
+    // 現在地の最寄りの地物を取得
     const nearestFeature = getNearestFeature(userLocation[0], userLocation[1]);
+    // 現在地と最寄りの地物をつないだラインのGeoJSON-Feature
     const routeFeature = {
         type: 'Feature',
         geometry: {
@@ -496,6 +498,7 @@ const drawRoute = () => {
             coordinates: [userLocation, nearestFeature._geometry.coordinates],
         },
     };
+    // style.sources.routeのGeoJSONデータを更新する
     map.getSource('route').setData({
         type: 'FeatureCollection',
         features: [routeFeature],
