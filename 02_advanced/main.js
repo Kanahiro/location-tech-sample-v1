@@ -458,21 +458,17 @@ const drawRoute = () => {
 const geolocationControl = new maplibregl.GeolocateControl({
     trackUserLocation: true,
 });
-map.addControl(geolocationControl);
+map.addControl(geolocationControl, 'bottom-right');
 geolocationControl.on('geolocate', (e) => {
     // 位置情報が更新されるたびに発火・userLocationを更新
     userLocation = [e.coords.longitude, e.coords.latitude];
-});
-geolocationControl.on('trackuserlocationend', () => {
-    // 位置情報取得モードが終了時に、保存している現在位置を消去する
-    userLocation = null;
 });
 
 // マップの初期ロード完了時に発火するイベント
 map.on('load', () => {
     // 背景地図・重ねるタイル地図のコントロール
     const opacity = new OpacityControl({
-        baseLayers: {
+        overLayers: {
             'hazard_flood-layer': '洪水浸水想定区域',
             'hazard_hightide-layer': '高潮浸水想定区域',
             'hazard_tsunami-layer': '津波浸水想定区域',
@@ -498,11 +494,14 @@ map.on('load', () => {
             'skhb-8-layer': '火山現象',
         },
     });
-    map.addControl(opacitySkhb, 'top-left');
+    map.addControl(opacitySkhb, 'top-right');
 
-    // 地図の移動・描画時に、ユーザー現在地と最寄りの避難施設の線分を描画する
-    map.on('move', () => drawRoute());
-    map.on('render', () => drawRoute());
+    // 地図画面が描画される毎フレームごとに、ユーザー現在地と最寄りの避難施設の線分を描画する
+    map.on('render', () => {
+        // GeolocationControlがオフなら現在位置を消去する
+        if (geolocationControl._watchState === 'OFF') userLocation = null;
+        drawRoute();
+    });
 });
 
 // 地図上でマウスが移動した際のイベント
