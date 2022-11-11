@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build --base=/location-tech-sample-v1/02_advanced/dist/",
     "preview": "vite preview"
   },
   "devDependencies": {
