@@ -19,7 +19,7 @@ const map = new maplibregl.Map({
     style: {
         version: 8,
         sources: {
-            // 背景地図ここから
+            // 背景地図
             osm: {
                 type: 'raster',
                 tiles: ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
@@ -28,37 +28,6 @@ const map = new maplibregl.Map({
                 attribution:
                     '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
             },
-            gsi_std: {
-                type: 'raster',
-                tiles: [
-                    'https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png',
-                ],
-                maxzoom: 18,
-                tileSize: 256,
-                attribution:
-                    '<a href="https://maps.gsi.go.jp/development/ichiran.html">地理院タイル</a>',
-            },
-            gsi_pale: {
-                type: 'raster',
-                tiles: [
-                    'https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png',
-                ],
-                maxzoom: 18,
-                tileSize: 256,
-                attribution:
-                    '<a href="https://maps.gsi.go.jp/development/ichiran.html">地理院タイル</a>',
-            },
-            gsi_photo: {
-                type: 'raster',
-                tiles: [
-                    'https://cyberjapandata.gsi.go.jp/xyz/seamlessphoto/{z}/{x}/{y}.jpg',
-                ],
-                maxzoom: 18,
-                tileSize: 256,
-                attribution:
-                    '<a href="https://maps.gsi.go.jp/development/ichiran.html">地理院タイル</a>',
-            },
-            // 背景地図ここまで
             // 重ねるハザードマップここから
             hazard_flood: {
                 type: 'raster',
@@ -151,38 +120,18 @@ const map = new maplibregl.Map({
             },
         },
         layers: [
-            // 背景地図ここから
+            // 背景地図
             {
                 id: 'osm-layer',
                 source: 'osm',
                 type: 'raster',
-                layout: { visibility: 'none' }, // レイヤーの表示はOpacityControlで操作するためデフォルトで非表示にしておく
             },
-            {
-                id: 'gsi_std-layer',
-                source: 'gsi_std',
-                type: 'raster',
-                layout: { visibility: 'none' },
-            },
-            {
-                id: 'gsi_pale-layer',
-                source: 'gsi_pale',
-                type: 'raster',
-                layout: { visibility: 'none' },
-            },
-            {
-                id: 'gsi_photo-layer',
-                source: 'gsi_photo',
-                type: 'raster',
-                layout: { visibility: 'none' },
-            },
-            // 背景地図ここまで
             // 重ねるハザードマップここから
             {
                 id: 'hazard_flood-layer',
                 source: 'hazard_flood',
                 type: 'raster',
-                layout: { visibility: 'none' },
+                layout: { visibility: 'none' }, // レイヤーの表示はOpacityControlで操作するためデフォルトで非表示にしておく
             },
             {
                 id: 'hazard_hightide-layer',
@@ -524,12 +473,6 @@ map.on('load', () => {
     // 背景地図・重ねるタイル地図のコントロール
     const opacity = new OpacityControl({
         baseLayers: {
-            'osm-layer': 'OpenStreetMap',
-            'gsi_std-layer': '地理院タイル標準地図',
-            'gsi_pale-layer': '地理院タイル淡色地図',
-            'gsi_photo-layer': '地理院タイル空中写真',
-        },
-        overLayers: {
             'hazard_flood-layer': '洪水浸水想定区域',
             'hazard_hightide-layer': '高潮浸水想定区域',
             'hazard_tsunami-layer': '津波浸水想定区域',
@@ -555,7 +498,7 @@ map.on('load', () => {
             'skhb-8-layer': '火山現象',
         },
     });
-    map.addControl(opacitySkhb, 'bottom-left');
+    map.addControl(opacitySkhb, 'top-left');
 
     // 地図の移動・描画時に、ユーザー現在地と最寄りの避難施設の線分を描画する
     map.on('move', () => drawRoute());
