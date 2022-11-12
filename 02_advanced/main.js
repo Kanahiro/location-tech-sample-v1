@@ -189,6 +189,7 @@ const map = new maplibregl.Map({
                 paint: {
                     'circle-color': '#6666cc',
                     'circle-radius': [
+                        // ズームレベルに応じた円の大きさ
                         'interpolate',
                         ['linear'],
                         ['zoom'],
@@ -200,8 +201,8 @@ const map = new maplibregl.Map({
                     'circle-stroke-width': 1,
                     'circle-stroke-color': '#ffffff',
                 },
-                filter: ['==', ['get', 'disaster1'], 1], // 属性:disaster1が1の地物のみ表示する
-                layout: { visibility: 'none' },
+                filter: ['get', 'disaster1'], // 属性:disaster1がtrueの地物のみ表示する
+                layout: { visibility: 'none' }, // レイヤーの表示はOpacityControlで操作するためデフォルトで非表示にしておく
             },
             {
                 id: 'skhb-2-layer',
@@ -209,7 +210,7 @@ const map = new maplibregl.Map({
                 'source-layer': 'skhb',
                 type: 'circle',
                 paint: {
-                    'circle-color': '#ccaa33',
+                    'circle-color': '#6666cc',
                     'circle-radius': [
                         'interpolate',
                         ['linear'],
@@ -222,7 +223,7 @@ const map = new maplibregl.Map({
                     'circle-stroke-width': 1,
                     'circle-stroke-color': '#ffffff',
                 },
-                filter: ['==', ['get', 'disaster2'], 1],
+                filter: ['get', 'disaster2'],
                 layout: { visibility: 'none' },
             },
             {
@@ -231,7 +232,7 @@ const map = new maplibregl.Map({
                 'source-layer': 'skhb',
                 type: 'circle',
                 paint: {
-                    'circle-color': '#aa33aa',
+                    'circle-color': '#6666cc',
                     'circle-radius': [
                         'interpolate',
                         ['linear'],
@@ -244,7 +245,7 @@ const map = new maplibregl.Map({
                     'circle-stroke-width': 1,
                     'circle-stroke-color': '#ffffff',
                 },
-                filter: ['==', ['get', 'disaster3'], 1],
+                filter: ['get', 'disaster3'],
                 layout: { visibility: 'none' },
             },
             {
@@ -253,7 +254,7 @@ const map = new maplibregl.Map({
                 'source-layer': 'skhb',
                 type: 'circle',
                 paint: {
-                    'circle-color': '#33aa33',
+                    'circle-color': '#6666cc',
                     'circle-radius': [
                         'interpolate',
                         ['linear'],
@@ -266,7 +267,7 @@ const map = new maplibregl.Map({
                     'circle-stroke-width': 1,
                     'circle-stroke-color': '#ffffff',
                 },
-                filter: ['==', ['get', 'disaster4'], 1],
+                filter: ['get', 'disaster4'],
                 layout: { visibility: 'none' },
             },
             {
@@ -275,7 +276,7 @@ const map = new maplibregl.Map({
                 'source-layer': 'skhb',
                 type: 'circle',
                 paint: {
-                    'circle-color': '#3333aa',
+                    'circle-color': '#6666cc',
                     'circle-radius': [
                         'interpolate',
                         ['linear'],
@@ -288,7 +289,7 @@ const map = new maplibregl.Map({
                     'circle-stroke-width': 1,
                     'circle-stroke-color': '#ffffff',
                 },
-                filter: ['==', ['get', 'disaster5'], 1],
+                filter: ['get', 'disaster5'],
                 layout: { visibility: 'none' },
             },
             {
@@ -297,7 +298,7 @@ const map = new maplibregl.Map({
                 'source-layer': 'skhb',
                 type: 'circle',
                 paint: {
-                    'circle-color': '#aa6666',
+                    'circle-color': '#6666cc',
                     'circle-radius': [
                         'interpolate',
                         ['linear'],
@@ -310,7 +311,7 @@ const map = new maplibregl.Map({
                     'circle-stroke-width': 1,
                     'circle-stroke-color': '#ffffff',
                 },
-                filter: ['==', ['get', 'disaster6'], 1],
+                filter: ['get', 'disaster6'],
                 layout: { visibility: 'none' },
             },
             {
@@ -319,7 +320,7 @@ const map = new maplibregl.Map({
                 'source-layer': 'skhb',
                 type: 'circle',
                 paint: {
-                    'circle-color': '#3333aa',
+                    'circle-color': '#6666cc',
                     'circle-radius': [
                         'interpolate',
                         ['linear'],
@@ -332,7 +333,7 @@ const map = new maplibregl.Map({
                     'circle-stroke-width': 1,
                     'circle-stroke-color': '#ffffff',
                 },
-                filter: ['==', ['get', 'disaster7'], 1],
+                filter: ['get', 'disaster7'],
                 layout: { visibility: 'none' },
             },
             {
@@ -341,7 +342,7 @@ const map = new maplibregl.Map({
                 'source-layer': 'skhb',
                 type: 'circle',
                 paint: {
-                    'circle-color': '#aa3333',
+                    'circle-color': '#6666cc',
                     'circle-radius': [
                         'interpolate',
                         ['linear'],
@@ -354,7 +355,7 @@ const map = new maplibregl.Map({
                     'circle-stroke-width': 1,
                     'circle-stroke-color': '#ffffff',
                 },
-                filter: ['==', ['get', 'disaster8'], 1],
+                filter: ['get', 'disaster8'],
                 layout: { visibility: 'none' },
             },
         ],
@@ -420,7 +421,7 @@ geolocationControl.on('geolocate', (e) => {
     userLocation = [e.coords.longitude, e.coords.latitude];
 });
 
-// マップの初期ロード完了時に発火するイベント
+// マップの初期ロード完了時に発火するイベントを定義
 map.on('load', () => {
     // 背景地図・重ねるタイル地図のコントロール
     const opacity = new OpacityControl({
