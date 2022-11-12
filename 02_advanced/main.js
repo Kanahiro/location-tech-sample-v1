@@ -1,8 +1,8 @@
-// MapLibre GL JS
+// MapLibre GL JSの読み込み
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 
-// レイヤーコントロール
+// OpacityControlプラグインの読み込み
 import OpacityControl from 'maplibre-gl-opacity';
 import 'maplibre-gl-opacity/dist/maplibre-gl-opacity.css';
 
@@ -10,16 +10,16 @@ import 'maplibre-gl-opacity/dist/maplibre-gl-opacity.css';
 import distance from '@turf/distance';
 
 const map = new maplibregl.Map({
-    container: 'map',
-    zoom: 5,
-    minZoom: 5,
-    maxZoom: 18,
-    center: [138, 37],
-    maxBounds: [122, 20, 154, 50],
+    container: 'map', // div要素のid
+    zoom: 5, // 初期表示のズーム
+    center: [138, 37], // 初期表示の中心
+    minZoom: 5, // 最小ズーム
+    maxZoom: 18, // 最大ズーム
+    maxBounds: [122, 20, 154, 50], // 表示可能な範囲
     style: {
         version: 8,
         sources: {
-            // 背景地図
+            // 背景地図ソース
             osm: {
                 type: 'raster',
                 tiles: ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
@@ -120,7 +120,7 @@ const map = new maplibregl.Map({
             },
         },
         layers: [
-            // 背景地図
+            // 背景地図レイヤー
             {
                 id: 'osm-layer',
                 source: 'osm',
@@ -131,36 +131,42 @@ const map = new maplibregl.Map({
                 id: 'hazard_flood-layer',
                 source: 'hazard_flood',
                 type: 'raster',
+                paint: { 'raster-opacity': 0.7 },
                 layout: { visibility: 'none' }, // レイヤーの表示はOpacityControlで操作するためデフォルトで非表示にしておく
             },
             {
                 id: 'hazard_hightide-layer',
                 source: 'hazard_hightide',
                 type: 'raster',
+                paint: { 'raster-opacity': 0.7 },
                 layout: { visibility: 'none' },
             },
             {
                 id: 'hazard_tsunami-layer',
                 source: 'hazard_tsunami',
                 type: 'raster',
+                paint: { 'raster-opacity': 0.7 },
                 layout: { visibility: 'none' },
             },
             {
                 id: 'hazard_doseki-layer',
                 source: 'hazard_doseki',
                 type: 'raster',
+                paint: { 'raster-opacity': 0.7 },
                 layout: { visibility: 'none' },
             },
             {
                 id: 'hazard_kyukeisha-layer',
                 source: 'hazard_kyukeisha',
                 type: 'raster',
+                paint: { 'raster-opacity': 0.7 },
                 layout: { visibility: 'none' },
             },
             {
                 id: 'hazard_jisuberi-layer',
                 source: 'hazard_jisuberi',
                 type: 'raster',
+                paint: { 'raster-opacity': 0.7 },
                 layout: { visibility: 'none' },
             },
             // 重ねるハザードマップここまで
@@ -174,28 +180,7 @@ const map = new maplibregl.Map({
                     'line-width': 4,
                 },
             },
-            // 全ての指定緊急避難場所ここから
-            {
-                id: 'skhb-0-layer',
-                source: 'skhb',
-                'source-layer': 'skhb',
-                type: 'circle',
-                paint: {
-                    'circle-color': '#77aaee',
-                    'circle-radius': [
-                        'interpolate',
-                        ['linear'],
-                        ['zoom'],
-                        5,
-                        2,
-                        14,
-                        6,
-                    ],
-                    'circle-stroke-width': 1,
-                    'circle-stroke-color': '#ffffff',
-                },
-                layout: { visibility: 'none' },
-            },
+            // 指定緊急避難場所ここから
             {
                 id: 'skhb-1-layer',
                 source: 'skhb',
@@ -439,7 +424,7 @@ geolocationControl.on('geolocate', (e) => {
 map.on('load', () => {
     // 背景地図・重ねるタイル地図のコントロール
     const opacity = new OpacityControl({
-        overLayers: {
+        baseLayers: {
             'hazard_flood-layer': '洪水浸水想定区域',
             'hazard_hightide-layer': '高潮浸水想定区域',
             'hazard_tsunami-layer': '津波浸水想定区域',
@@ -447,14 +432,12 @@ map.on('load', () => {
             'hazard_kyukeisha-layer': '急傾斜警戒区域',
             'hazard_jisuberi-layer': '地滑り警戒区域',
         },
-        opacityControl: true,
     });
     map.addControl(opacity, 'top-left');
 
     // 指定緊急避難場所レイヤーのコントロール
     const opacitySkhb = new OpacityControl({
         baseLayers: {
-            'skhb-0-layer': '全緊急指定避難場所',
             'skhb-1-layer': '洪水',
             'skhb-2-layer': '崖崩れ/土石流/地滑り',
             'skhb-3-layer': '高潮',
@@ -510,7 +493,6 @@ map.on('mousemove', (e) => {
     // マウスカーソル以下に指定緊急避難場所レイヤーが存在するかどうかをチェック
     const features = map.queryRenderedFeatures(e.point, {
         layers: [
-            'skhb-0-layer',
             'skhb-1-layer',
             'skhb-2-layer',
             'skhb-3-layer',
@@ -535,7 +517,6 @@ map.on('click', (e) => {
     // クリック箇所に指定緊急避難場所レイヤーが存在するかどうかをチェック
     const features = map.queryRenderedFeatures(e.point, {
         layers: [
-            'skhb-0-layer',
             'skhb-1-layer',
             'skhb-2-layer',
             'skhb-3-layer',
