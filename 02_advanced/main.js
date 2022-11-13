@@ -409,7 +409,7 @@ const getNearestFeature = (longitude, latitude) => {
     return nearestFeature;
 };
 
-let userLocation = null; // ユーザーの最新の現在地を保存する
+let userLocation = null; // ユーザーの最新の現在地を保存する変数
 
 // MapLibre GL JSの現在地取得機能
 const geolocationControl = new maplibregl.GeolocateControl({
@@ -450,43 +450,6 @@ map.on('load', () => {
         },
     });
     map.addControl(opacitySkhb, 'top-right');
-
-    // 地図画面が描画される毎フレームごとに、ユーザー現在地と最寄りの避難施設の線分を描画する
-    map.on('render', () => {
-        // GeolocationControlがオフなら現在位置を消去する
-        if (geolocationControl._watchState === 'OFF') userLocation = null;
-
-        // ズームが一定値以下または現在地が計算されていない場合はラインを消去する
-        if (map.getZoom() < 7 || userLocation === null) {
-            map.getSource('route').setData({
-                type: 'FeatureCollection',
-                features: [],
-            });
-            return;
-        }
-
-        // 現在地の最寄りの地物を取得
-        const nearestFeature = getNearestFeature(
-            userLocation[0],
-            userLocation[1],
-        );
-        // 現在地と最寄りの地物をつないだラインのGeoJSON-Feature
-        const routeFeature = {
-            type: 'Feature',
-            geometry: {
-                type: 'LineString',
-                coordinates: [
-                    userLocation,
-                    nearestFeature._geometry.coordinates,
-                ],
-            },
-        };
-        // style.sources.routeのGeoJSONデータを更新する
-        map.getSource('route').setData({
-            type: 'FeatureCollection',
-            features: [routeFeature],
-        });
-    });
 });
 
 // 地図上でマウスが移動した際のイベント
@@ -531,44 +494,84 @@ map.on('click', (e) => {
     if (features.length === 0) return; // 地物がなければ処理を終了
 
     // 地物があればポップアップを表示する
-    const feature = features[0];
+    const feature = features[0]; // 複数の地物が見つかっている場合は最初の要素を用いる
     const popup = new maplibregl.Popup()
-        .setLngLat(feature.geometry.coordinates)
+        .setLngLat(feature.geometry.coordinates) // [lon, lat]
+        // 名称・住所・備考・対応している災害種別を表示するよう、HTMLを文字列でセット
         .setHTML(
             `\
-            <div style="font-weight:900; font-size: 1.2rem;">${
-                feature.properties.name
-            }</div>\
-            <div>${feature.properties.address}</div>\
-            <div>${feature.properties.remarks ?? ''}</div>\
-            <div>\
-            <span${
-                feature.properties.disaster1 === 1 ? '' : ' style="color:#ccc;"'
-            }">洪水</span>\
-            <span${
-                feature.properties.disaster2 === 1 ? '' : ' style="color:#ccc;"'
-            }> 崖崩れ/土石流/地滑り</span>\
-            <span${
-                feature.properties.disaster3 === 1 ? '' : ' style="color:#ccc;"'
-            }> 高潮</span>\
-            <span${
-                feature.properties.disaster4 === 1 ? '' : ' style="color:#ccc;"'
-            }> 地震</span>\
-            <div>\
-            <span${
-                feature.properties.disaster5 === 1 ? '' : ' style="color:#ccc;"'
-            }>津波</span>\
-            <span${
-                feature.properties.disaster6 === 1 ? '' : ' style="color:#ccc;"'
-            }> 大規模な火事</span>\
-            <span${
-                feature.properties.disaster7 === 1 ? '' : ' style="color:#ccc;"'
-            }> 内水氾濫</span>\
-            <span${
-                feature.properties.disaster8 === 1 ? '' : ' style="color:#ccc;"'
-            }> 火山現象</span>\
-            </div>`,
+        <div style="font-weight:900; font-size: 1.2rem;">${
+            feature.properties.name
+        }</div>\
+        <div>${feature.properties.address}</div>\
+        <div>${feature.properties.remarks ?? ''}</div>\
+        <div>\
+        <span${
+            feature.properties.disaster1 === 1 ? '' : ' style="color:#ccc;"'
+        }">洪水</span>\
+        <span${
+            feature.properties.disaster2 === 1 ? '' : ' style="color:#ccc;"'
+        }> 崖崩れ/土石流/地滑り</span>\
+        <span${
+            feature.properties.disaster3 === 1 ? '' : ' style="color:#ccc;"'
+        }> 高潮</span>\
+        <span${
+            feature.properties.disaster4 === 1 ? '' : ' style="color:#ccc;"'
+        }> 地震</span>\
+        <div>\
+        <span${
+            feature.properties.disaster5 === 1 ? '' : ' style="color:#ccc;"'
+        }>津波</span>\
+        <span${
+            feature.properties.disaster6 === 1 ? '' : ' style="color:#ccc;"'
+        }> 大規模な火事</span>\
+        <span${
+            feature.properties.disaster7 === 1 ? '' : ' style="color:#ccc;"'
+        }> 内水氾濫</span>\
+        <span${
+            feature.properties.disaster8 === 1 ? '' : ' style="color:#ccc;"'
+        }> 火山現象</span>\
+        </div>`,
         )
         .setMaxWidth('400px')
         .addTo(map);
+});
+
+// 地図画面が描画される毎フレームごとに、ユーザー現在地と最寄りの避難施設の線分を描画する
+map.once('load', () => {
+    map.on('render', () => {
+        // GeolocationControlがオフなら現在位置を消去する
+        if (geolocationControl._watchState === 'OFF') userLocation = null;
+
+        // ズームが一定値以下または現在地が計算されていない場合はラインを消去する
+        if (map.getZoom() < 7 || userLocation === null) {
+            map.getSource('route').setData({
+                type: 'FeatureCollection',
+                features: [],
+            });
+            return;
+        }
+
+        // 現在地の最寄りの地物を取得
+        const nearestFeature = getNearestFeature(
+            userLocation[0],
+            userLocation[1],
+        );
+        // 現在地と最寄りの地物をつないだラインのGeoJSON-Feature
+        const routeFeature = {
+            type: 'Feature',
+            geometry: {
+                type: 'LineString',
+                coordinates: [
+                    userLocation,
+                    nearestFeature._geometry.coordinates,
+                ],
+            },
+        };
+        // style.sources.routeのGeoJSONデータを更新する
+        map.getSource('route').setData({
+            type: 'FeatureCollection',
+            features: [routeFeature],
+        });
+    });
 });
