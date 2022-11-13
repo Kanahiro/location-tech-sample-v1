@@ -12,6 +12,10 @@
     <body>
         <div id="map" style="height: 90vh"></div>
         
-        <script></script>
+        <script>
+            // PWA: ServiceWorker読み込み
+            if ('serviceWorker' in navigator)
+                navigator.serviceWorker.register('/sw.js');
+        </script>
     </body>
 </html>
