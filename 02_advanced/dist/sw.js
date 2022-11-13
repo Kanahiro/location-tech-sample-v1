@@ -1,1 +1,2 @@
-self.addEventListener('fetch', function () {});
+// PWAのために必須
+self.addEventListener('fetch', () => {});

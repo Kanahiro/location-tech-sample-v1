@@ -450,56 +450,31 @@ map.on('load', () => {
         },
     });
     map.addControl(opacitySkhb, 'top-right');
-});
 
-// 地図上でマウスが移動した際のイベント
-map.on('mousemove', (e) => {
-    // マウスカーソル以下に指定緊急避難場所レイヤーが存在するかどうかをチェック
-    const features = map.queryRenderedFeatures(e.point, {
-        layers: [
-            'skhb-1-layer',
-            'skhb-2-layer',
-            'skhb-3-layer',
-            'skhb-4-layer',
-            'skhb-5-layer',
-            'skhb-6-layer',
-            'skhb-7-layer',
-            'skhb-8-layer',
-        ],
-    });
-    if (features.length > 0) {
-        // 地物が存在する場合はカーソルをpointerに変更
-        map.getCanvas().style.cursor = 'pointer';
-    } else {
-        // 存在しない場合はデフォルト
-        map.getCanvas().style.cursor = '';
-    }
-});
+    // 地図上をクリックした際のイベント
+    map.on('click', (e) => {
+        // クリック箇所に指定緊急避難場所レイヤーが存在するかどうかをチェック
+        const features = map.queryRenderedFeatures(e.point, {
+            layers: [
+                'skhb-1-layer',
+                'skhb-2-layer',
+                'skhb-3-layer',
+                'skhb-4-layer',
+                'skhb-5-layer',
+                'skhb-6-layer',
+                'skhb-7-layer',
+                'skhb-8-layer',
+            ],
+        });
+        if (features.length === 0) return; // 地物がなければ処理を終了
 
-// 地図上をクリックした際のイベント
-map.on('click', (e) => {
-    // クリック箇所に指定緊急避難場所レイヤーが存在するかどうかをチェック
-    const features = map.queryRenderedFeatures(e.point, {
-        layers: [
-            'skhb-1-layer',
-            'skhb-2-layer',
-            'skhb-3-layer',
-            'skhb-4-layer',
-            'skhb-5-layer',
-            'skhb-6-layer',
-            'skhb-7-layer',
-            'skhb-8-layer',
-        ],
-    });
-    if (features.length === 0) return; // 地物がなければ処理を終了
-
-    // 地物があればポップアップを表示する
-    const feature = features[0]; // 複数の地物が見つかっている場合は最初の要素を用いる
-    const popup = new maplibregl.Popup()
-        .setLngLat(feature.geometry.coordinates) // [lon, lat]
-        // 名称・住所・備考・対応している災害種別を表示するよう、HTMLを文字列でセット
-        .setHTML(
-            `\
+        // 地物があればポップアップを表示する
+        const feature = features[0]; // 複数の地物が見つかっている場合は最初の要素を用いる
+        const popup = new maplibregl.Popup()
+            .setLngLat(feature.geometry.coordinates) // [lon, lat]
+            // 名称・住所・備考・対応している災害種別を表示するよう、HTMLを文字列でセット
+            .setHTML(
+                `\
         <div style="font-weight:900; font-size: 1.2rem;">${
             feature.properties.name
         }</div>\
@@ -532,13 +507,36 @@ map.on('click', (e) => {
             feature.properties.disaster8 === 1 ? '' : ' style="color:#ccc;"'
         }> 火山現象</span>\
         </div>`,
-        )
-        .setMaxWidth('400px')
-        .addTo(map);
-});
+            )
+            .setMaxWidth('400px')
+            .addTo(map);
+    });
 
-// 地図画面が描画される毎フレームごとに、ユーザー現在地と最寄りの避難施設の線分を描画する
-map.once('load', () => {
+    // 地図上でマウスが移動した際のイベント
+    map.on('mousemove', (e) => {
+        // マウスカーソル以下に指定緊急避難場所レイヤーが存在するかどうかをチェック
+        const features = map.queryRenderedFeatures(e.point, {
+            layers: [
+                'skhb-1-layer',
+                'skhb-2-layer',
+                'skhb-3-layer',
+                'skhb-4-layer',
+                'skhb-5-layer',
+                'skhb-6-layer',
+                'skhb-7-layer',
+                'skhb-8-layer',
+            ],
+        });
+        if (features.length > 0) {
+            // 地物が存在する場合はカーソルをpointerに変更
+            map.getCanvas().style.cursor = 'pointer';
+        } else {
+            // 存在しない場合はデフォルト
+            map.getCanvas().style.cursor = '';
+        }
+    });
+
+    // 地図画面が描画される毎フレームごとに、ユーザー現在地と最寄りの避難施設の線分を描画する
     map.on('render', () => {
         // GeolocationControlがオフなら現在位置を消去する
         if (geolocationControl._watchState === 'OFF') userLocation = null;
