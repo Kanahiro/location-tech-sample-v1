@@ -482,29 +482,29 @@ map.on('load', () => {
         <div>${feature.properties.remarks ?? ''}</div>\
         <div>\
         <span${
-            feature.properties.disaster1 === 1 ? '' : ' style="color:#ccc;"'
+            feature.properties.disaster1 ? '' : ' style="color:#ccc;"'
         }">洪水</span>\
         <span${
-            feature.properties.disaster2 === 1 ? '' : ' style="color:#ccc;"'
+            feature.properties.disaster2 ? '' : ' style="color:#ccc;"'
         }> 崖崩れ/土石流/地滑り</span>\
         <span${
-            feature.properties.disaster3 === 1 ? '' : ' style="color:#ccc;"'
+            feature.properties.disaster3 ? '' : ' style="color:#ccc;"'
         }> 高潮</span>\
         <span${
-            feature.properties.disaster4 === 1 ? '' : ' style="color:#ccc;"'
+            feature.properties.disaster4 ? '' : ' style="color:#ccc;"'
         }> 地震</span>\
         <div>\
         <span${
-            feature.properties.disaster5 === 1 ? '' : ' style="color:#ccc;"'
+            feature.properties.disaster5 ? '' : ' style="color:#ccc;"'
         }>津波</span>\
         <span${
-            feature.properties.disaster6 === 1 ? '' : ' style="color:#ccc;"'
+            feature.properties.disaster6 ? '' : ' style="color:#ccc;"'
         }> 大規模な火事</span>\
         <span${
-            feature.properties.disaster7 === 1 ? '' : ' style="color:#ccc;"'
+            feature.properties.disaster7 ? '' : ' style="color:#ccc;"'
         }> 内水氾濫</span>\
         <span${
-            feature.properties.disaster8 === 1 ? '' : ' style="color:#ccc;"'
+            feature.properties.disaster8 ? '' : ' style="color:#ccc;"'
         }> 火山現象</span>\
         </div>`,
             )
