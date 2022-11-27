@@ -1,7 +1,7 @@
 {
     "theme_color": "#2185f3",
     "background_color": "#2185f3",
-    "display": "fullscreen",
+    "display": "standalone",
     "scope": "./",
     "start_url": "./",
     "name": "防災マップ",
