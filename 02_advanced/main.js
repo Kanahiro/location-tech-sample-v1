@@ -9,6 +9,9 @@ import 'maplibre-gl-opacity/dist/maplibre-gl-opacity.css';
 // 地点間の距離を計算するモジュール
 import distance from '@turf/distance';
 
+// 地理院標高タイルをMapLibre GL JSで利用するためのモジュール
+import { useGsiTerrainSource } from 'maplibre-gl-gsi-terrain';
+
 const map = new maplibregl.Map({
     container: 'map', // div要素のid
     zoom: 5, // 初期表示のズーム
@@ -572,4 +575,29 @@ map.on('load', () => {
             features: [routeFeature],
         });
     });
+
+    // 地形データ生成（地理院標高タイル）
+    const gsiTerrainSource = useGsiTerrainSource(maplibregl.addProtocol);
+    // 地形データ追加（type=raster-dem）
+    map.addSource('terrain', gsiTerrainSource);
+    // 陰影図追加
+    map.addLayer(
+        {
+            id: 'hillshade',
+            source: 'terrain', // type=raster-demのsourceを指定
+            type: 'hillshade', // 陰影図レイヤー
+            paint: {
+                'hillshade-illumination-anchor': 'map', // 陰影の方向の基準
+                'hillshade-exaggeration': 0.2, // 陰影の強さ
+            },
+        },
+        'hazard_jisuberi-layer', // どのレイヤーの手前に追加するかIDで指定
+    );
+    // 3D地形
+    map.addControl(
+        new maplibregl.TerrainControl({
+            source: 'terrain', // type="raster-dem"のsourceのID
+            exaggeration: 1, // 標高を強調する倍率
+        }),
+    );
 });

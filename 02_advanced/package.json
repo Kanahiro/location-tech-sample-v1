@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build --base=/location-tech-sample-v1/02_advanced/dist/",
+    "build": "vite build --base=./",
     "preview": "vite preview"
   },
   "devDependencies": {
@@ -14,6 +14,7 @@
   "dependencies": {
     "@turf/distance": "^6.5.0",
     "maplibre-gl": "^2.4.0",
+    "maplibre-gl-gsi-terrain": "^0.0.2",
     "maplibre-gl-opacity": "^1.4.0"
   }
 }
